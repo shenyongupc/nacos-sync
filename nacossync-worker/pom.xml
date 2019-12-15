@@ -27,6 +27,7 @@
         <cloud.version>Finchley.SR2</cloud.version>
         <mockito.version>1.10.19</mockito.version>
         <nacos.client.verison>1.1.4</nacos.client.verison>
+        <kubernetes.client.verison>4.6.4</kubernetes.client.verison>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -137,6 +138,13 @@
         <dependency>
             <groupId>com.ecwid.consul</groupId>
             <artifactId>consul-api</artifactId>
+        </dependency>
+
+        <!-- kubernetes -->
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-client</artifactId>
+            <version>${kubernetes.client.verison}</version>
         </dependency>
 
     </dependencies>

@@ -29,7 +29,9 @@ public enum ClusterTypeEnum {
 
     CONSUL("CONSUL", "consul集群"),
 
-    ZK("ZK", "zookeeper集群");
+    ZK("ZK", "zookeeper集群"),
+
+    KUBERNETES("KUBERNETES", "kubernetes集群");
 
 
     private String code;
