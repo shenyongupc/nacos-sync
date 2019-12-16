@@ -144,7 +144,7 @@ spring.datasource.password=root
 
 ```
 ## Kubernetes Service Sync to Nacos
-- Nacos need to deployed by Kubernetes
+- service need to deployed by Kubernetes
 - Config Kubernetes api server http basic auth info in DB table [system_config]（current only support http basic auth）
   ```
   INSERT INTO `nacos_sync`.`system_config`(`id`, `config_desc`, `config_key`, `config_value`) VALUES (1, NULL, 'kubernetes.auth.basic.username', 'admin');
