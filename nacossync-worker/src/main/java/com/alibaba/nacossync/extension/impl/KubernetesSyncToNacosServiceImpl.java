@@ -104,7 +104,8 @@ public class KubernetesSyncToNacosServiceImpl implements SyncService {
                 }
                 List<Instance> allInstances = destNamingService.getAllInstances(taskDO.getServiceName());
                 for (Instance instance : allInstances) {
-                    if (needDelete(instance.getMetadata(), taskDO)) {
+                    if (needDelete(instance.getMetadata(), taskDO) &&
+                            !instanceKeySet.contains(composeInstanceKey(instance.getIp(), instance.getPort()))) {
                         destNamingService.deregisterInstance(taskDO.getServiceName(), instance.getIp(), instance.getPort());
                     }
                 }
@@ -146,6 +147,7 @@ public class KubernetesSyncToNacosServiceImpl implements SyncService {
                     Instance temp = new Instance();
                     temp.setIp(endpointAddress.getIp());
                     temp.setPort(endpointPort.getPort());
+                    temp.setServiceName(taskDO.getServiceName());
                     Map<String, String> metaData = new HashMap<>(endpointMetadata);
                     metaData.put(SkyWalkerConstants.DEST_CLUSTERID_KEY, taskDO.getDestClusterId());
                     metaData.put(SkyWalkerConstants.SYNC_SOURCE_KEY,
@@ -173,16 +175,21 @@ public class KubernetesSyncToNacosServiceImpl implements SyncService {
     }
 
     private Map<String, String> getServiceMetadata(Service service) {
+        final Map<String, String> serviceMetadata = new HashMap<>();
         Map<String, String> labelMetadata = service.getMetadata().getLabels();
         if (log.isDebugEnabled()) {
             log.debug("Adding label metadata: " + labelMetadata);
         }
-        final Map<String, String> serviceMetadata = new HashMap<>(labelMetadata);
+        if (labelMetadata != null && !labelMetadata.isEmpty()) {
+            serviceMetadata.putAll(labelMetadata);
+        }
         Map<String, String> annotationMetadata = service.getMetadata().getAnnotations();
         if (log.isDebugEnabled()) {
             log.debug("Adding annotation metadata: " + annotationMetadata);
         }
-        serviceMetadata.putAll(annotationMetadata);
+        if (annotationMetadata != null && !annotationMetadata.isEmpty()) {
+            serviceMetadata.putAll(annotationMetadata);
+        }
         return serviceMetadata;
     }
 
@@ -193,8 +200,11 @@ public class KubernetesSyncToNacosServiceImpl implements SyncService {
         // with the client
 
         if (endpoints != null && endpoints.getSubsets() != null) {
+            final Service service = client.services().inNamespace(endpoints.getMetadata().getNamespace())
+                    .withName(endpoints.getMetadata().getName()).get();
             es.setNamespace(endpoints.getMetadata().getNamespace());
             es.setEndpointSubset(endpoints.getSubsets());
+            es.setMetadata(this.getServiceMetadata(service));
         }
 
         return es;
