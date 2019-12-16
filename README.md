@@ -1,5 +1,5 @@
 # NacosSync
-
+support kubernetes services sync to nacos
 ## Function
 
  - Console: provide API and console for management
