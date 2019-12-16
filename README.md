@@ -66,9 +66,7 @@ Info |      +------------+                   ^
 | Zookeeper | Nacos     | Yes     | Only support registery center of **Dubbo**                   |
 | Consul    | Nacos     | Yes     | Only support  registery center of **Spring Cloud**           |
 | Eureka    | Nacos     | Yes     | Only support  registery center of **Spring Cloud**           |
-
-
-
+| Kubernetes    | Nacos     | Yes     |            |
 
 
 ## Manual Goal
@@ -145,6 +143,13 @@ spring.datasource.username=root
 spring.datasource.password=root
 
 ```
+## Kubernetes Service Sync to Nacos
+- Nacos need to deployed by Kubernetes
+- Config Kubernetes api server http basic auth info in DB table [system_config]（current only support http basic auth）
+  ```
+  INSERT INTO `nacos_sync`.`system_config`(`id`, `config_desc`, `config_key`, `config_value`) VALUES (1, NULL, 'kubernetes.auth.basic.username', 'admin');
+  INSERT INTO `nacos_sync`.`system_config`(`id`, `config_desc`, `config_key`, `config_value`) VALUES (2, NULL, 'kubernetes.auth.basic.password', 'admin');
+  ```
 
 ## Start Server
 
